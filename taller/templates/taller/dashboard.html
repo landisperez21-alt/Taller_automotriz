@@ -1,0 +1,183 @@
+{% extends "taller/base.html" %}
+{% load taller_extras %}
+
+{% block title %}Dashboard · MotorTech Service{% endblock %}
+{% block topbar_heading %}Dashboard{% endblock %}
+
+{% block content %}
+<div data-kpi-url="{% url 'api_kpis' %}">
+    <header class="page-head">
+        <div class="page-head__text">
+            <h1>Panel de control</h1>
+            <p>Resumen operativo del taller, calculado en tiempo real.</p>
+        </div>
+        <div class="page-head__actions">
+            <span class="live" data-live role="status">
+                <span class="live__dot" aria-hidden="true"></span>
+                En vivo · <span data-live-time>{{ kpis.actualizado }}</span>
+            </span>
+        </div>
+    </header>
+
+    <section class="kpi-grid" aria-label="Indicadores principales">
+        {% if perms.taller.view_cliente %}
+            <a class="card kpi reveal" href="{% url 'crud_list' slug='clientes' %}">
+                <div class="kpi__top"><p class="kpi__label">Clientes</p><span class="kpi__icon">{% icono "users" %}</span></div>
+                <p class="kpi__value" data-kpi="clientes" data-countup>{{ kpis.clientes }}</p>
+                <p class="kpi__meta">Propietarios registrados</p>
+            </a>
+        {% endif %}
+        {% if perms.taller.view_vehiculo %}
+            <a class="card kpi reveal" href="{% url 'crud_list' slug='vehiculos' %}">
+                <div class="kpi__top"><p class="kpi__label">Vehículos</p><span class="kpi__icon">{% icono "car" %}</span></div>
+                <p class="kpi__value" data-kpi="vehiculos" data-countup>{{ kpis.vehiculos }}</p>
+                <p class="kpi__meta">Unidades con historial</p>
+            </a>
+        {% endif %}
+        {% if perms.taller.view_cita %}
+            <a class="card kpi reveal" href="{% url 'crud_list' slug='citas' %}">
+                <div class="kpi__top"><p class="kpi__label">Citas</p><span class="kpi__icon">{% icono "calendar" %}</span></div>
+                <p class="kpi__value" data-kpi="citas" data-countup>{{ kpis.citas }}</p>
+                <p class="kpi__meta"><b data-kpi="citas_hoy">{{ kpis.citas_hoy }}</b> hoy · <b data-kpi="citas_pendientes">{{ kpis.citas_pendientes }}</b> por atender</p>
+            </a>
+        {% endif %}
+        {% if perms.taller.view_diagnostico %}
+            <a class="card kpi reveal" href="{% url 'crud_list' slug='diagnosticos' %}">
+                <div class="kpi__top"><p class="kpi__label">Diagnósticos</p><span class="kpi__icon">{% icono "activity" %}</span></div>
+                <p class="kpi__value" data-kpi="diagnosticos" data-countup>{{ kpis.diagnosticos }}</p>
+                <p class="kpi__meta"><b data-kpi="diagnosticos_mes">{{ kpis.diagnosticos_mes }}</b> este mes</p>
+            </a>
+        {% endif %}
+        {% if perms.taller.view_ordenservicio %}
+            <a class="card kpi reveal" href="{% url 'crud_list' slug='ordenes' %}">
+                <div class="kpi__top"><p class="kpi__label">Órdenes</p><span class="kpi__icon">{% icono "clipboard" %}</span></div>
+                <p class="kpi__value" data-kpi="ordenes" data-countup>{{ kpis.ordenes }}</p>
+                <p class="kpi__meta"><b data-kpi="ordenes_proceso">{{ kpis.ordenes_proceso }}</b> en proceso · <b data-kpi="ordenes_finalizadas">{{ kpis.ordenes_finalizadas }}</b> finalizadas</p>
+            </a>
+            <div class="card kpi kpi--money reveal">
+                <div class="kpi__top"><p class="kpi__label">Ingresos</p><span class="kpi__icon">{% icono "coin" %}</span></div>
+                <p class="kpi__value" data-kpi="ingresos">{{ kpis.ingresos }}</p>
+                <p class="kpi__meta">Órdenes finalizadas</p>
+            </div>
+        {% endif %}
+        {% if perms.taller.view_repuesto %}
+            <a class="card kpi reveal" href="{% url 'crud_list' slug='repuestos' %}?estado=agotado">
+                <div class="kpi__top"><p class="kpi__label">Agotados</p><span class="kpi__icon">{% icono "package" %}</span></div>
+                <p class="kpi__value" data-kpi="repuestos_agotados" data-countup>{{ kpis.repuestos_agotados }}</p>
+                <p class="kpi__meta">Repuestos sin stock</p>
+            </a>
+        {% endif %}
+    </section>
+
+    <div class="dash-grid">
+        {% if perms.taller.view_ordenservicio %}
+        <section class="card span-7 reveal" aria-labelledby="t-ingresos">
+            <div class="card__head"><h2 id="t-ingresos">Ingresos de los últimos 6 meses</h2><span class="muted small">Órdenes finalizadas</span></div>
+            <div class="card__body">
+                <div class="vbars" role="img" aria-label="Gráfico de barras con los ingresos mensuales">
+                    {% for m in ingresos_meses %}
+                        <div class="vbar" title="{{ m.etiqueta }}: {{ m.valor }}">
+                            <span class="vbar__tip">{{ m.valor }}</span>
+                            <div class="vbar__col" style="height: {{ m.alto }}%"></div>
+                            <span class="vbar__label">{{ m.etiqueta }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="card span-5 reveal" aria-labelledby="t-estados">
+            <div class="card__head"><h2 id="t-estados">Estado de la operación</h2></div>
+            <div class="card__body">
+                <div class="hbars">
+                    {% if perms.taller.view_ordenservicio %}
+                        <p class="kpi__label" style="margin:0">Órdenes de servicio</p>
+                        {% for d in dist_ordenes %}
+                            <div>
+                                <div class="hbar__row"><span>{{ d.etiqueta }}</span><b>{{ d.n }}</b></div>
+                                <div class="hbar__track"><div class="hbar__fill hbar__fill--{{ d.clase }}" style="width: {{ d.pct }}%"></div></div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if perms.taller.view_cita %}
+                        <p class="kpi__label" style="margin:.5rem 0 0">Citas</p>
+                        {% for d in dist_citas %}
+                            <div>
+                                <div class="hbar__row"><span>{{ d.etiqueta }}</span><b>{{ d.n }}</b></div>
+                                <div class="hbar__track"><div class="hbar__fill hbar__fill--{{ d.clase }}" style="width: {{ d.pct }}%"></div></div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        {% if perms.taller.view_cita %}
+        <section class="card card--flush span-6 reveal" aria-labelledby="t-citas">
+            <div class="card__head">
+                <h2 id="t-citas">Próximas citas</h2>
+                <a class="btn btn--sm" href="{% url 'crud_list' slug='citas' %}">Ver agenda</a>
+            </div>
+            <ul class="list-lines">
+                {% for c in citas_proximas %}
+                    <li>
+                        <div class="list-lines__main">
+                            <b>{{ c.vehiculo.placa }} · {{ c.vehiculo.cliente.nombre_completo }}</b>
+                            <span>{{ c.fecha|date:"d/m/Y" }} {{ c.hora|time:"H:i" }} · {{ c.mecanico.nombre_completo }}</span>
+                        </div>
+                        <span class="badge badge--{{ c.estado|clase_estado }}">{{ c.get_estado_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="muted">No hay citas próximas programadas.</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if perms.taller.view_ordenservicio %}
+        <section class="card card--flush span-6 reveal" aria-labelledby="t-ordenes">
+            <div class="card__head">
+                <h2 id="t-ordenes">Órdenes recientes</h2>
+                <a class="btn btn--sm" href="{% url 'crud_list' slug='ordenes' %}">Ver órdenes</a>
+            </div>
+            <ul class="list-lines">
+                {% for o in ordenes_recientes %}
+                    <li>
+                        <div class="list-lines__main">
+                            <b>{{ o.numero }} · {{ o.cliente.nombre_completo }}</b>
+                            <span>{{ o.vehiculo.placa }} · {{ o.costo_total|moneda }}</span>
+                        </div>
+                        <span class="badge badge--{{ o.estado|clase_estado }}">{{ o.get_estado_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="muted">Todavía no hay órdenes registradas.</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if perms.taller.view_repuesto %}
+        <section class="card card--flush reveal" style="grid-column: span 12" aria-labelledby="t-stock">
+            <div class="card__head">
+                <h2 id="t-stock">Repuestos con stock crítico</h2>
+                <a class="btn btn--sm" href="{% url 'crud_list' slug='repuestos' %}">Ver inventario</a>
+            </div>
+            <ul class="list-lines">
+                {% for r in repuestos_alerta %}
+                    <li>
+                        <div class="list-lines__main">
+                            <b>{{ r.nombre }}</b>
+                            <span>{{ r.codigo }} · {{ r.marca }} · {{ r.precio|moneda }}</span>
+                        </div>
+                        <span class="badge badge--{{ r.estado|clase_estado }}">{{ r.stock }} u. · {{ r.get_estado_display }}</span>
+                    </li>
+                {% empty %}
+                    <li class="muted">El inventario está en buen nivel.</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

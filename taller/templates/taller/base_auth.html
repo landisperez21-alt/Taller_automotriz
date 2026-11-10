@@ -1,0 +1,57 @@
+{% load static taller_extras %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#07090d">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %}MotorTech Service{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f6bff'/%3E%3Cpath d='M9 22V10l7 8 7-8v12' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="{% static 'taller/css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'taller/css/components.css' %}">
+</head>
+<body>
+    <div class="auth">
+        <section class="auth__hero" aria-label="Presentación">
+            <svg class="auth__orbits" viewBox="0 0 400 400" aria-hidden="true">
+                <g class="spin">
+                    <circle cx="200" cy="200" r="190"/>
+                    <circle cx="200" cy="200" r="140" stroke-dasharray="3 11"/>
+                </g>
+                <g class="spin spin--rev">
+                    <circle cx="200" cy="200" r="92"/>
+                    <circle cx="200" cy="108" r="6" style="fill:#22e3ff;stroke:none"/>
+                </g>
+            </svg>
+
+            <a class="brand" href="{% url 'login' %}" aria-label="MotorTech Service">
+                <span class="brand__mark">{% icono "wrench" %}</span>
+                <span>
+                    <span class="brand__name">MotorTech</span>
+                    <span class="brand__sub">Service</span>
+                </span>
+            </a>
+
+            <div class="auth__headline">
+                <h1>Tu taller, <span>bajo control</span> en un solo panel.</h1>
+                <p>Clientes, vehículos, citas, diagnósticos y órdenes de servicio conectados, sin cuadernos ni hojas duplicadas.</p>
+            </div>
+
+            <ul class="auth__points">
+                <li>{% icono "clipboard" %}<span><b>Historial completo</b> de reparaciones por vehículo</span></li>
+                <li>{% icono "package" %}<span><b>Inventario</b> que se descuenta con cada orden</span></li>
+                <li>{% icono "printer" %}<span><b>Reportes</b> listos para imprimir o guardar en PDF</span></li>
+            </ul>
+        </section>
+
+        <section class="auth__panel">
+            <div class="auth__card {% block card_class %}{% endblock %}">
+                {% block panel %}{% endblock %}
+            </div>
+        </section>
+    </div>
+
+    {% include "taller/components/messages.html" %}
+    <script src="{% static 'taller/js/app.js' %}" defer></script>
+</body>
+</html>

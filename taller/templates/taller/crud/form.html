@@ -1,0 +1,58 @@
+{% extends "taller/base.html" %}
+{% load taller_extras %}
+
+{% block title %}{{ titulo_accion }} · MotorTech Service{% endblock %}
+{% block topbar_heading %}{{ modulo.titulo }}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div class="page-head__text">
+        <nav class="crumbs" aria-label="Ruta de navegación">
+            <a href="{% url 'crud_list' slug=slug %}">{{ modulo.titulo }}</a><span aria-hidden="true">/</span><span>{{ titulo_accion }}</span>
+        </nav>
+        <h1>{{ titulo_accion }}</h1>
+        <p>Los campos marcados con <span class="req" style="color:var(--cyan)">*</span> son obligatorios.</p>
+    </div>
+</header>
+
+<section class="card reveal">
+    <div class="card__body">
+        {% if form.non_field_errors %}
+            <div class="alert" role="alert">
+                {% icono "alert" %}
+                <div>{{ form.non_field_errors }}</div>
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate data-once>
+            {% csrf_token %}
+            <div class="form-grid">
+                {% for field in form %}
+                    <div class="field{% if field|es_ancho or field.name == 'cita' or field.name == 'diagnostico' or field.name == 'cliente' or field.name == 'vehiculo' %} field--wide{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="req" aria-hidden="true">*</span>{% endif %}</label>
+                        {{ field }}
+                        {% if field.errors %}{{ field.errors }}{% endif %}
+                        {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if slug == 'ordenes' %}
+                <div class="total-box" style="margin-top:1.35rem" data-orden-total aria-live="polite">
+                    <div class="total-box__parts">
+                        <span>Repuestos <b data-out="repuestos">S/ 0.00</b></span>
+                        <span>Mano de obra <b data-out="mano">S/ 0.00</b></span>
+                        <span>Stock disponible <b data-out="stock">—</b></span>
+                    </div>
+                    <div class="total-box__total"><span>Total estimado</span><strong data-out="total">S/ 0.00</strong></div>
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <a class="btn" href="{% url 'crud_list' slug=slug %}">Cancelar</a>
+                <button class="btn btn--primary" type="submit">{{ boton }}</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

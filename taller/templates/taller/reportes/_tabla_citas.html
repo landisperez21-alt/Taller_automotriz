@@ -1,0 +1,36 @@
+{% load taller_extras %}
+<table class="table table--stack">
+    <thead>
+        <tr>
+            <th scope="col">Fecha</th>
+            <th scope="col">Vehículo</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Mecánico</th>
+            <th scope="col">Motivo</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="num">Costo estimado</th>
+            <th scope="col" class="col-actions no-print"><span class="sr-only">Documento</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in filas %}
+            <tr>
+                <td data-label="Fecha">{{ c.fecha|date:"d/m/Y" }}<span class="cell-sub">{{ c.hora|time:"H:i" }}</span></td>
+                <td data-label="Vehículo"><span class="tag-code">{{ c.vehiculo.placa }}</span><span class="cell-sub">{{ c.vehiculo.descripcion }}</span></td>
+                <td data-label="Cliente">{{ c.vehiculo.cliente.nombre_completo }}<span class="cell-sub">DNI {{ c.vehiculo.cliente.dni }}</span></td>
+                <td data-label="Mecánico">{{ c.mecanico.nombre_completo }}<span class="cell-sub">{{ c.mecanico.especialidad }}</span></td>
+                <td data-label="Motivo" class="cell-wrap">{{ c.motivo }}</td>
+                <td data-label="Estado"><span class="badge badge--{{ c.estado|clase_estado }}">{{ c.get_estado_display }}</span></td>
+                <td data-label="Costo estimado" class="num">{{ c.costo_estimado_total|moneda }}</td>
+                <td class="col-actions no-print"><a class="btn btn--ghost btn--icon btn--sm" href="{% url 'documento' tipo='citas' pk=c.pk %}" title="Ver documento" aria-label="Ver documento de la cita">{% icono "eye" %}</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">Total ({{ totales.cantidad }} cita{{ totales.cantidad|pluralize }})</td>
+            <td class="num">{{ totales.costo_estimado|moneda }}</td>
+            <td class="no-print"></td>
+        </tr>
+    </tfoot>
+</table>

@@ -1,0 +1,79 @@
+erDiagram
+    CLIENTE ||--o{ VEHICULO : "posee"
+    VEHICULO ||--o{ CITA : "agenda"
+    MECANICO ||--o{ CITA : "atiende"
+    CITA ||--o{ DIAGNOSTICO : "origina"
+    DIAGNOSTICO ||--o{ ORDEN_SERVICIO : "genera"
+    REPUESTO ||--o{ ORDEN_SERVICIO : "se usa en"
+
+    CLIENTE {
+        bigint id PK
+        varchar nombres
+        varchar apellidos
+        varchar dni UK
+        varchar telefono
+        varchar correo
+        varchar direccion
+        datetime created_at
+    }
+    VEHICULO {
+        bigint id PK
+        bigint cliente_id FK
+        varchar placa UK
+        varchar marca
+        varchar modelo
+        int anio
+        varchar color
+        int kilometraje
+    }
+    MECANICO {
+        bigint id PK
+        varchar nombres
+        varchar apellidos
+        varchar dni UK
+        varchar especialidad
+        varchar telefono
+        varchar correo
+        varchar estado
+    }
+    CITA {
+        bigint id PK
+        bigint vehiculo_id FK
+        bigint mecanico_id FK
+        date fecha
+        time hora
+        varchar motivo
+        varchar estado
+        text observaciones
+    }
+    DIAGNOSTICO {
+        bigint id PK
+        bigint cita_id FK
+        text descripcion_problema
+        text causa
+        text solucion_recomendada
+        date fecha
+        decimal costo_estimado
+    }
+    REPUESTO {
+        bigint id PK
+        varchar codigo UK
+        varchar nombre
+        text descripcion
+        varchar marca
+        decimal precio
+        int stock
+        varchar estado
+    }
+    ORDEN_SERVICIO {
+        bigint id PK
+        bigint diagnostico_id FK
+        bigint repuesto_id FK
+        text descripcion_trabajo
+        int cantidad_repuesto
+        decimal costo_mano_obra
+        decimal costo_total
+        date fecha_inicio
+        date fecha_entrega
+        varchar estado
+    }

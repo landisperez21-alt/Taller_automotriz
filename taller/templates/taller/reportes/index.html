@@ -1,0 +1,25 @@
+{% extends "taller/base.html" %}
+{% load taller_extras %}
+
+{% block title %}Reportes · MotorTech Service{% endblock %}
+{% block topbar_heading %}Reportes{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div class="page-head__text">
+        <h1>Reportes</h1>
+        <p>Filtra por fechas, estado o mecánico y luego imprime o guarda el resultado como PDF desde el navegador.</p>
+    </div>
+</header>
+
+<section class="report-cards" aria-label="Reportes disponibles">
+    {% for r in reportes %}
+        <a class="card report-card reveal" href="{% url 'reporte' tipo=r.tipo %}">
+            <span class="kpi__icon">{% icono r.modulo.icono %}</span>
+            <h3>{{ r.titulo }}</h3>
+            <p>{{ r.modulo.descripcion }}</p>
+            <span class="report-card__cta">Abrir reporte {% icono "back" "flip" %}</span>
+        </a>
+    {% endfor %}
+</section>
+{% endblock %}

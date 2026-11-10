@@ -1,0 +1,51 @@
+{% load static taller_extras %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#07090d">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %}MotorTech Service{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f6bff'/%3E%3Cpath d='M9 22V10l7 8 7-8v12' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="{% static 'taller/css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'taller/css/components.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+    <div class="app">
+        {% include "taller/components/sidebar.html" %}
+        <div class="nav-scrim" aria-hidden="true"></div>
+
+        <div class="main">
+            <header class="topbar">
+                <button type="button" class="btn btn--icon only-mobile" data-nav-toggle aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menú">
+                    {% icono "menu" %}
+                </button>
+                <div class="topbar__title">
+                    <span class="topbar__eyebrow">{% now "l, j \d\e F" %}</span>
+                    <span class="topbar__heading">{% block topbar_heading %}MotorTech Service{% endblock %}</span>
+                </div>
+                <div class="topbar__actions">
+                    <span class="topbar__user muted small">{{ user.get_username }}</span>
+                </div>
+            </header>
+
+            <main class="page" id="contenido">
+                {% block content %}{% endblock %}
+            </main>
+
+            <footer class="footer">
+                <span>© {% now "Y" %} MotorTech Service</span>
+                <span>Gestión integral de taller automotriz</span>
+            </footer>
+        </div>
+    </div>
+
+    {% include "taller/components/messages.html" %}
+
+    <script src="{% static 'taller/js/app.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

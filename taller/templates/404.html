@@ -1,0 +1,10 @@
+{% extends "taller/base_auth.html" %}
+{% load taller_extras %}
+{% block title %}Página no encontrada · MotorTech Service{% endblock %}
+{% block panel %}
+<div class="card auth-card">
+    <h2>Página no encontrada</h2>
+    <p class="lead">El recurso que buscas no existe o fue movido.</p>
+    <a class="btn btn--primary btn--block" href="{% url 'dashboard' %}">Ir al panel</a>
+</div>
+{% endblock %}

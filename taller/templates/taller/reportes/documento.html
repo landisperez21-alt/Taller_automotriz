@@ -1,0 +1,161 @@
+{% extends "taller/base.html" %}
+{% load taller_extras %}
+
+{% block title %}{% if tipo == 'citas' %}Cita{% elif tipo == 'diagnosticos' %}Diagnóstico{% else %}Orden de servicio{% endif %} #{{ objeto.pk }} · MotorTech Service{% endblock %}
+{% block topbar_heading %}Documento{% endblock %}
+
+{% block content %}
+<header class="page-head no-print">
+    <div class="page-head__text">
+        <nav class="crumbs" aria-label="Ruta de navegación">
+            <a href="{% url 'crud_list' slug=tipo %}">{{ modulo.titulo }}</a><span aria-hidden="true">/</span><span>Documento imprimible</span>
+        </nav>
+        <h1>Documento imprimible</h1>
+        <p>Usa «Imprimir / Guardar PDF» y elige «Guardar como PDF» como destino.</p>
+    </div>
+    <div class="page-head__actions">
+        <a class="btn" href="{% url 'crud_list' slug=tipo %}">{% icono "back" %}<span>Volver</span></a>
+        <button type="button" class="btn btn--primary" data-print>{% icono "printer" %}<span>Imprimir / Guardar PDF</span></button>
+    </div>
+</header>
+
+<article class="sheet reveal">
+    <header class="sheet__head">
+        <div class="sheet__brand">
+            <span class="brand__mark">{% icono "wrench" %}</span>
+            <div><b>MotorTech Service</b><span>Taller automotriz</span></div>
+        </div>
+        <div class="sheet__meta">
+            <strong>{% if tipo == 'citas' %}Cita N.º {{ objeto.pk|stringformat:"05d" }}{% elif tipo == 'diagnosticos' %}Diagnóstico N.º {{ objeto.pk|stringformat:"05d" }}{% else %}Orden {{ objeto.numero }}{% endif %}</strong>
+            Emitido el {{ generado|date:"d/m/Y H:i" }}
+        </div>
+    </header>
+
+    <section class="sheet__section">
+        <h2>Cliente</h2>
+        <dl class="dl">
+            <div><dt>Nombre</dt><dd>{{ objeto.cliente.nombre_completo }}</dd></div>
+            <div><dt>DNI</dt><dd>{{ objeto.cliente.dni }}</dd></div>
+            <div><dt>Teléfono</dt><dd>{{ objeto.cliente.telefono }}</dd></div>
+            <div><dt>Correo</dt><dd>{{ objeto.cliente.correo }}</dd></div>
+        </dl>
+    </section>
+
+    <section class="sheet__section">
+        <h2>Vehículo</h2>
+        <dl class="dl">
+            <div><dt>Placa</dt><dd>{{ objeto.vehiculo.placa }}</dd></div>
+            <div><dt>Marca y modelo</dt><dd>{{ objeto.vehiculo.marca }} {{ objeto.vehiculo.modelo }}</dd></div>
+            <div><dt>Año / color</dt><dd>{{ objeto.vehiculo.anio }} · {{ objeto.vehiculo.color }}</dd></div>
+            <div><dt>Kilometraje</dt><dd>{{ objeto.vehiculo.kilometraje|stringformat:"d" }} km</dd></div>
+        </dl>
+    </section>
+
+    <section class="sheet__section">
+        <h2>Mecánico responsable</h2>
+        <dl class="dl">
+            <div><dt>Nombre</dt><dd>{{ objeto.mecanico.nombre_completo }}</dd></div>
+            <div><dt>Especialidad</dt><dd>{{ objeto.mecanico.especialidad }}</dd></div>
+            <div><dt>Teléfono</dt><dd>{{ objeto.mecanico.telefono }}</dd></div>
+        </dl>
+    </section>
+
+    {% if tipo == 'citas' %}
+        <section class="sheet__section">
+            <h2>Datos de la cita</h2>
+            <dl class="dl">
+                <div><dt>Fecha</dt><dd>{{ objeto.fecha|date:"d/m/Y" }}</dd></div>
+                <div><dt>Hora</dt><dd>{{ objeto.hora|time:"H:i" }}</dd></div>
+                <div><dt>Estado</dt><dd>{{ objeto.get_estado_display }}</dd></div>
+            </dl>
+            <p class="prose" style="margin-top:.75rem"><b>Motivo:</b> {{ objeto.motivo }}</p>
+            {% if objeto.observaciones %}<p class="prose" style="margin-top:.5rem"><b>Observaciones:</b> {{ objeto.observaciones }}</p>{% endif %}
+        </section>
+
+        <section class="sheet__section">
+            <h2>Diagnósticos</h2>
+            {% if diagnosticos %}
+                <table>
+                    <thead><tr><th>Fecha</th><th>Problema</th><th>Causa</th><th>Solución recomendada</th><th class="num">Costo estimado</th></tr></thead>
+                    <tbody>
+                        {% for d in diagnosticos %}
+                            <tr>
+                                <td>{{ d.fecha|date:"d/m/Y" }}</td>
+                                <td style="white-space:pre-line">{{ d.descripcion_problema }}</td>
+                                <td style="white-space:pre-line">{{ d.causa }}</td>
+                                <td style="white-space:pre-line">{{ d.solucion_recomendada }}</td>
+                                <td class="num">{{ d.costo_estimado|moneda }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot><tr class="total-row"><td colspan="4">Costo estimado total</td><td class="num">{{ total_diagnosticos|moneda }}</td></tr></tfoot>
+                </table>
+            {% else %}
+                <p class="prose">Esta cita aún no tiene diagnósticos registrados.</p>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    {% if tipo == 'diagnosticos' %}
+        <section class="sheet__section">
+            <h2>Diagnóstico</h2>
+            <dl class="dl">
+                <div><dt>Fecha del diagnóstico</dt><dd>{{ objeto.fecha|date:"d/m/Y" }}</dd></div>
+                <div><dt>Cita asociada</dt><dd>#{{ objeto.cita.pk }} · {{ objeto.cita.fecha|date:"d/m/Y" }} {{ objeto.cita.hora|time:"H:i" }}</dd></div>
+                <div><dt>Costo estimado</dt><dd>{{ objeto.costo_estimado|moneda }}</dd></div>
+            </dl>
+        </section>
+        <section class="sheet__section"><h2>Descripción del problema</h2><p class="prose">{{ objeto.descripcion_problema }}</p></section>
+        <section class="sheet__section"><h2>Causa de la falla</h2><p class="prose">{{ objeto.causa }}</p></section>
+        <section class="sheet__section"><h2>Solución recomendada</h2><p class="prose">{{ objeto.solucion_recomendada }}</p></section>
+    {% endif %}
+
+    {% if tipo == 'ordenes' %}
+        <section class="sheet__section">
+            <h2>Datos de la orden</h2>
+            <dl class="dl">
+                <div><dt>Estado</dt><dd>{{ objeto.get_estado_display }}</dd></div>
+                <div><dt>Inicio del servicio</dt><dd>{{ objeto.fecha_inicio|date:"d/m/Y" }}</dd></div>
+                <div><dt>Entrega programada</dt><dd>{{ objeto.fecha_entrega|date:"d/m/Y" }}</dd></div>
+                <div><dt>Diagnóstico</dt><dd>#{{ objeto.diagnostico.pk }} · {{ objeto.diagnostico.fecha|date:"d/m/Y" }}</dd></div>
+            </dl>
+        </section>
+        <section class="sheet__section"><h2>Diagnóstico de origen</h2><p class="prose">{{ objeto.diagnostico.descripcion_problema }}</p></section>
+        <section class="sheet__section"><h2>Trabajos realizados</h2><p class="prose">{{ objeto.descripcion_trabajo }}</p></section>
+        <section class="sheet__section">
+            <h2>Repuestos y costos</h2>
+            <table>
+                <thead><tr><th>Código</th><th>Repuesto</th><th class="num">Cantidad</th><th class="num">P. unitario</th><th class="num">Subtotal</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>{{ objeto.repuesto.codigo }}</td>
+                        <td>{{ objeto.repuesto.nombre }}<br><small>{{ objeto.repuesto.marca }}</small></td>
+                        <td class="num">{{ objeto.cantidad_repuesto }}</td>
+                        <td class="num">{{ objeto.precio_unitario|moneda }}</td>
+                        <td class="num">{{ objeto.costo_repuestos|moneda }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="4">Mano de obra</td><td class="num">{{ objeto.costo_mano_obra|moneda }}</td></tr>
+                    <tr class="total-row"><td colspan="4">Total a pagar</td><td class="num">{{ objeto.costo_total|moneda }}</td></tr>
+                </tfoot>
+            </table>
+        </section>
+    {% else %}
+        <section class="sheet__section">
+            <h2>Trabajos y repuestos utilizados</h2>
+            {% if ordenes %}
+                {% include "taller/reportes/_ordenes_detalle.html" %}
+            {% else %}
+                <p class="prose">Aún no se han registrado órdenes de servicio.</p>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    <div class="sheet__sign">
+        <div>Firma del cliente</div>
+        <div>Firma del mecánico</div>
+    </div>
+    <p class="sheet__foot">MotorTech Service · Documento generado por el sistema de gestión del taller</p>
+</article>
+{% endblock %}

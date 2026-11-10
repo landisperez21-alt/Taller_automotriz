@@ -1,0 +1,13 @@
+﻿{
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        ".venv": true,
+        "venv": true,
+        "db.sqlite3": true
+    },
+    "explorer.compactFolders": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.encoding": "utf8"
+}

@@ -1,0 +1,47 @@
+{% load taller_extras %}
+<aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a class="brand" href="{% url 'dashboard' %}" aria-label="MotorTech Service, ir al dashboard">
+        <span class="brand__mark">{% icono "wrench" %}</span>
+        <span>
+            <span class="brand__name">MotorTech</span>
+            <span class="brand__sub">Service</span>
+        </span>
+    </a>
+
+    <nav class="nav" aria-label="Secciones">
+        <span class="nav__label">Principal</span>
+        <a class="nav__link {% if seccion_activa == 'dashboard' %}is-active{% endif %}" href="{% url 'dashboard' %}"{% if seccion_activa == 'dashboard' %} aria-current="page"{% endif %}>
+            {% icono "dashboard" %}<span>Dashboard</span>
+        </a>
+
+        {% if menu_modulos %}
+            <span class="nav__label">Gestión</span>
+            {% for item in menu_modulos %}
+                <a class="nav__link {% if seccion_activa == item.slug %}is-active{% endif %}" href="{% url 'crud_list' slug=item.slug %}"{% if seccion_activa == item.slug %} aria-current="page"{% endif %}>
+                    {% icono item.icono %}<span>{{ item.titulo }}</span>
+                </a>
+            {% endfor %}
+        {% endif %}
+
+        {% if puede_reportes %}
+            <span class="nav__label">Análisis</span>
+            <a class="nav__link {% if seccion_activa == 'reportes' %}is-active{% endif %}" href="{% url 'reportes' %}"{% if seccion_activa == 'reportes' %} aria-current="page"{% endif %}>
+                {% icono "chart" %}<span>Reportes</span>
+            </a>
+        {% endif %}
+    </nav>
+
+    <div class="sidebar__foot">
+        <div class="userchip">
+            <span class="avatar" aria-hidden="true">{{ user.get_username|slice:":2"|upper }}</span>
+            <div>
+                <span class="userchip__name">{{ user.get_full_name|default:user.get_username }}</span>
+                <span class="userchip__role">{% if user.is_superuser %}Superusuario{% else %}{% for g in user.groups.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% empty %}Sin rol asignado{% endfor %}{% endif %}</span>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--ghost btn--icon btn--sm" title="Cerrar sesión" aria-label="Cerrar sesión">{% icono "logout" %}</button>
+            </form>
+        </div>
+    </div>
+</aside>

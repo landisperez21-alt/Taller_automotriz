@@ -1,0 +1,11 @@
+{% load taller_extras %}
+{% if messages %}
+    <div class="toasts" role="status" aria-live="polite">
+        {% for message in messages %}
+            <div class="toast toast--{{ message.tags }}">
+                <p>{{ message }}</p>
+                <button type="button" class="toast__close" aria-label="Cerrar aviso">{% icono "close" %}</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

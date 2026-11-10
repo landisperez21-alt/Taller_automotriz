@@ -1,0 +1,35 @@
+{% extends "taller/base.html" %}
+{% load taller_extras %}
+
+{% block title %}Eliminar {{ modulo.singular|lower }} · MotorTech Service{% endblock %}
+{% block topbar_heading %}{{ modulo.titulo }}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div class="page-head__text">
+        <nav class="crumbs" aria-label="Ruta de navegación">
+            <a href="{% url 'crud_list' slug=slug %}">{{ modulo.titulo }}</a><span aria-hidden="true">/</span><span>Eliminar</span>
+        </nav>
+        <h1>Eliminar {{ modulo.singular|lower }}</h1>
+    </div>
+</header>
+
+<section class="card reveal" style="max-width:36rem">
+    <div class="card__body">
+        <div class="modal__icon">{% icono "trash" %}</div>
+        <h2>¿Confirmas la eliminación?</h2>
+        <p class="muted" style="margin:.6rem 0 0">Se eliminará <b>{{ objeto }}</b>. Esta acción no se puede deshacer.</p>
+        {% if modulo.slug == 'ordenes' %}
+            <p class="help" style="margin-top:.75rem">Las unidades de repuesto de esta orden volverán al inventario.</p>
+        {% endif %}
+
+        <form method="post" data-once>
+            {% csrf_token %}
+            <div class="form-actions">
+                <a class="btn" href="{% url 'crud_list' slug=slug %}">Cancelar</a>
+                <button class="btn btn--danger" type="submit">Sí, eliminar</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

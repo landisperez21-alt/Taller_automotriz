@@ -1,0 +1,49 @@
+{% extends "taller/base_auth.html" %}
+{% load taller_extras %}
+
+{% block title %}Iniciar sesión · MotorTech Service{% endblock %}
+
+{% block panel %}
+<div class="card auth-card reveal">
+    <h2>Bienvenido de nuevo</h2>
+    <p class="lead">Ingresa tus credenciales para administrar el taller.</p>
+
+    {% if form.non_field_errors %}
+        <div class="alert" role="alert">
+            {% icono "alert" %}
+            <div>{{ form.non_field_errors }}</div>
+        </div>
+    {% endif %}
+
+    <form method="post" class="auth-stack" data-once>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="field">
+            <label for="{{ form.username.id_for_label }}">Usuario</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.password.id_for_label }}">Contraseña</label>
+            <div class="pw">
+                {{ form.password }}
+                <button type="button" class="pw__toggle" data-toggle-password="{{ form.password.id_for_label }}" aria-label="Mostrar contraseña" aria-pressed="false">
+                    {% icono "eye" %}
+                </button>
+            </div>
+            {{ form.password.errors }}
+        </div>
+
+        <label class="check-row" for="{{ form.mantener_sesion.id_for_label }}">
+            {{ form.mantener_sesion }}
+            <span>{{ form.mantener_sesion.label }}</span>
+        </label>
+
+        <button class="btn btn--primary btn--block" type="submit">Iniciar sesión</button>
+    </form>
+
+    <p class="auth-foot">¿Aún no tienes cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a></p>
+</div>
+{% endblock %}

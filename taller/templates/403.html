@@ -1,0 +1,10 @@
+{% extends "taller/base_auth.html" %}
+{% load taller_extras %}
+{% block title %}Acceso restringido · MotorTech Service{% endblock %}
+{% block panel %}
+<div class="card auth-card">
+    <h2>Acceso restringido</h2>
+    <p class="lead">Tu rol no tiene permiso para esta acción. Pide a un administrador del taller que revise tus permisos.</p>
+    <a class="btn btn--primary btn--block" href="{% url 'dashboard' %}">Volver al panel</a>
+</div>
+{% endblock %}

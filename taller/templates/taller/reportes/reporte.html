@@ -1,0 +1,80 @@
+{% extends "taller/base.html" %}
+{% load taller_extras %}
+
+{% block title %}{{ titulo }} · MotorTech Service{% endblock %}
+{% block topbar_heading %}Reportes{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div class="page-head__text">
+        <nav class="crumbs" aria-label="Ruta de navegación">
+            <a href="{% url 'reportes' %}">Reportes</a><span aria-hidden="true">/</span><span>{{ titulo }}</span>
+        </nav>
+        <h1>{{ titulo }}</h1>
+        <p>Generado el {{ generado|date:"d/m/Y H:i" }} por {{ user.get_full_name|default:user.get_username }}.</p>
+    </div>
+    <div class="page-head__actions">
+        <button type="button" class="btn btn--primary" data-print>{% icono "printer" %}<span>Imprimir / Guardar PDF</span></button>
+    </div>
+</header>
+
+<section class="card no-print reveal" aria-label="Filtros del reporte">
+    <div class="card__body">
+        <form method="get" class="filters">
+            {% for field in form %}
+                <div class="field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}{{ field.errors }}{% endif %}
+                </div>
+            {% endfor %}
+            <div class="field field--actions">
+                <button class="btn btn--primary" type="submit">{% icono "filter" %}<span>Aplicar</span></button>
+                <a class="btn" href="{% url 'reporte' tipo=tipo %}">Limpiar</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+{# Encabezado que solo aparece al imprimir #}
+<div class="print-only print-head">
+    <div>
+        <h1>MotorTech Service · {{ titulo }}</h1>
+        <p>{% if resumen %}{{ resumen|join:" · " }}{% else %}Sin filtros aplicados{% endif %}</p>
+    </div>
+    <p>Generado: {{ generado|date:"d/m/Y H:i" }}</p>
+</div>
+
+<section style="margin-top:1.25rem" aria-label="Resumen">
+    {% if resumen %}
+        <p class="muted small no-print" style="margin-bottom:.75rem">Filtros: {{ resumen|join:" · " }}</p>
+    {% endif %}
+    <div class="summary">
+        <div class="summary__item"><span>Registros</span><strong>{{ totales.cantidad }}</strong></div>
+        {% if tipo == 'ordenes' %}
+            <div class="summary__item"><span>Mano de obra</span><strong>{{ totales.mano_obra|moneda }}</strong></div>
+            <div class="summary__item"><span>Repuestos</span><strong>{{ totales.repuestos|moneda }}</strong></div>
+            <div class="summary__item"><span>Total</span><strong>{{ totales.total|moneda }}</strong></div>
+        {% else %}
+            <div class="summary__item"><span>Costo estimado</span><strong>{{ totales.costo_estimado|moneda }}</strong></div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card card--flush reveal" aria-label="Resultados">
+    {% if filas %}
+        <div class="table-wrap">
+            {% include plantilla_tabla %}
+        </div>
+        {% if truncado %}
+            <p class="muted small" style="padding:.9rem 1.25rem;margin:0">Se muestran los primeros {{ limite }} de {{ totales.cantidad }} registros. Acota los filtros para ver el resto.</p>
+        {% endif %}
+    {% else %}
+        <div class="empty">
+            <span class="empty__icon">{% icono "chart" %}</span>
+            <h3>Sin resultados</h3>
+            <p>No hay registros que coincidan con los filtros seleccionados.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

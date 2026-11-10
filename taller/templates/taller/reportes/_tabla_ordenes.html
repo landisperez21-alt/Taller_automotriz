@@ -1,0 +1,45 @@
+{% load taller_extras %}
+<table class="table table--stack">
+    <thead>
+        <tr>
+            <th scope="col">N.º</th>
+            <th scope="col">Vehículo</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Mecánico</th>
+            <th scope="col">Trabajos realizados</th>
+            <th scope="col">Repuesto utilizado</th>
+            <th scope="col" class="num">Mano de obra</th>
+            <th scope="col" class="num">Repuestos</th>
+            <th scope="col" class="num">Total</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="col-actions no-print"><span class="sr-only">Documento</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for o in filas %}
+            <tr>
+                <td data-label="N.º"><span class="tag-code">{{ o.numero }}</span><span class="cell-sub">{{ o.fecha_inicio|date:"d/m/Y" }} → {{ o.fecha_entrega|date:"d/m/Y" }}</span></td>
+                <td data-label="Vehículo"><span class="tag-code">{{ o.vehiculo.placa }}</span><span class="cell-sub">{{ o.vehiculo.descripcion }}</span></td>
+                <td data-label="Cliente">{{ o.cliente.nombre_completo }}<span class="cell-sub">DNI {{ o.cliente.dni }}</span></td>
+                <td data-label="Mecánico">{{ o.mecanico.nombre_completo }}</td>
+                <td data-label="Trabajos" class="cell-wrap">{{ o.descripcion_trabajo }}</td>
+                <td data-label="Repuesto">{{ o.repuesto.nombre }}<span class="cell-sub">{{ o.cantidad_repuesto }} u. × {{ o.precio_unitario|moneda }}</span></td>
+                <td data-label="Mano de obra" class="num">{{ o.costo_mano_obra|moneda }}</td>
+                <td data-label="Repuestos" class="num">{{ o.costo_repuestos|moneda }}</td>
+                <td data-label="Total" class="num"><b>{{ o.costo_total|moneda }}</b></td>
+                <td data-label="Estado"><span class="badge badge--{{ o.estado|clase_estado }}">{{ o.get_estado_display }}</span></td>
+                <td class="col-actions no-print"><a class="btn btn--ghost btn--icon btn--sm" href="{% url 'documento' tipo='ordenes' pk=o.pk %}" title="Ver documento" aria-label="Ver documento de la orden">{% icono "eye" %}</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">Total ({{ totales.cantidad }} orden{{ totales.cantidad|pluralize:"es" }})</td>
+            <td class="num">{{ totales.mano_obra|moneda }}</td>
+            <td class="num">{{ totales.repuestos|moneda }}</td>
+            <td class="num">{{ totales.total|moneda }}</td>
+            <td></td>
+            <td class="no-print"></td>
+        </tr>
+    </tfoot>
+</table>

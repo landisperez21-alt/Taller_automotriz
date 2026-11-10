@@ -1,0 +1,32 @@
+{% load taller_extras %}
+<table>
+    <thead>
+        <tr>
+            <th>Orden</th>
+            <th>Trabajos realizados</th>
+            <th>Repuesto utilizado</th>
+            <th class="num">Cant.</th>
+            <th class="num">P. unit.</th>
+            <th class="num">Mano de obra</th>
+            <th class="num">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for o in ordenes %}
+            <tr>
+                <td>{{ o.numero }}<br><small>{{ o.get_estado_display }}</small></td>
+                <td style="white-space:pre-line">{{ o.descripcion_trabajo }}</td>
+                <td>{{ o.repuesto.nombre }}<br><small>{{ o.repuesto.codigo }}</small></td>
+                <td class="num">{{ o.cantidad_repuesto }}</td>
+                <td class="num">{{ o.precio_unitario|moneda }}</td>
+                <td class="num">{{ o.costo_mano_obra|moneda }}</td>
+                <td class="num">{{ o.costo_total|moneda }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    {% if ordenes|length > 1 %}
+        <tfoot>
+            <tr class="total-row"><td colspan="6">Total de órdenes</td><td class="num">{{ total_ordenes|moneda }}</td></tr>
+        </tfoot>
+    {% endif %}
+</table>
