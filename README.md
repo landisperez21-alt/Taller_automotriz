@@ -1,8 +1,4 @@
-⚡ MOTORTECH SERVICE | AUTOMOTIVE MANAGEMENT SYSTEM
-◈ 01. SOBRE EL PROYECTOMotorTech Service es una plataforma web integral desarrollada con Python y Django para automatizar los procesos operativos de un taller automotriz.El sistema gestiona desde la recepción del cliente y registro de vehículos hasta la asignación de mecánicos, generación de diagnósticos, control automático de inventario de repuestos y cálculo de costos en las órdenes de servicio. Además, incluye un control de acceso por roles (Jefe/Administrador, Recepción y Taller/Mecánico).
-◈ 02. TECNOLOGÍASTecnologíaAplicaciónPythonLógica de negocio y procesamiento backendDjangoFramework MVC/MTV webHTML5Estructura de plantillas HTMLCSS3Diseño de interfaz adaptativo (CSS custom)JavaScriptDinamismo y actualización automáticaSQLiteBase de datos relacional predeterminadaGit & GitHubControl de versiones
-
-◈ 03. ESTRUCTURA DEL PROYECTOTaller_automotriz-main/
+⚡ MOTORTECH SERVICE | AUTOMOTIVE MANAGEMENT SYSTEM◈ 01. SOBRE EL PROYECTOMotorTech Service es una plataforma web desarrollada con Python y Django para automatizar los procesos operativos de un taller automotriz.El sistema gestiona la recepción de clientes, registro de vehículos, asignación de mecánicos, generación de diagnósticos, control automático de inventario de repuestos y cálculo de costos en las órdenes de servicio, incorporando control de acceso por roles (Jefe/Administrador, Recepción y Taller/Mecánico).◈ 02. TECNOLOGÍASTecnologíaAplicaciónPythonLógica de negocio y procesamiento backendDjangoFramework web MVC / MTVHTML5Estructura de plantillas HTMLCSS3Diseño de interfaz adaptativo (CSS propio)JavaScriptInteracción dinámica y actualización de datosSQLiteBase de datos relacional de desarrolloGit & GitHubControl de versiones◈ 03. ESTRUCTURA DEL PROYECTOTaller_automotriz-main/
 │
 ├── config/
 │   ├── settings.py
@@ -34,8 +30,7 @@ Ejecuta las migraciones:python manage.py migrate
 Carga los datos de demostración y cuentas demo:python manage.py cargar_demo --usuarios
 Inicia el servidor:python manage.py runserver
 Abre el navegador:http://127.0.0.1:8000/
-Credenciales de prueba:Administrador: jefe_demo | demo1234Recepción: recepcion_demo | demo1234Taller: taller_demo | demo1234
-◈ 05. PROPÓSITOAutomatizar el flujo operativo completo de un taller automotriz.Implementar control de permisos granular según el rol del usuario.Gestionar el stock de repuestos dinámicamente con cada orden de servicio.Generar reportes imprimibles y exportables en formato PDF desde el navegador.
+Credenciales de prueba creadas:Administrador: jefe_demo | demo1234Recepción: recepcion_demo | demo1234Taller / Mecánico: taller_demo | demo1234◈ 05. PROPÓSITOAutomatizar el flujo operativo completo de un taller automotriz.Implementar un control de permisos granular según el rol del usuario.Gestionar el stock de repuestos dinámicamente con cada orden de servicio.Generar reportes imprimibles y exportables en formato PDF desde el navegador.
 ◈ 06. AUTOR
 <table>
 <tr>
